@@ -1,9 +1,12 @@
 const db = require('../models');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs'); // Menggunakan bcryptjs sesuai kodemu
 const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = 'rahasia_sembako_super_aman_123'; // Pindahkan kuncinya ke sini
 
+// ==========================================
+// FITUR LOGIN (Kode aslimu)
+// ==========================================
 const login = async (req, res) => {
     const { username, password } = req.body;
     
@@ -42,6 +45,50 @@ const login = async (req, res) => {
     }
 };
 
+
+// ==========================================
+// FITUR REGISTER (Baru ditambahkan)
+// ==========================================
+const register = async (req, res) => {
+    const { username, password } = req.body;
+    
+    try {
+        // 1. Cek apakah username sudah ada di database
+        const [existingUsers] = await db.sequelize.query(
+            'SELECT * FROM "Users" WHERE username = :username',
+            { replacements: { username: username } }
+        );
+        
+        if (existingUsers.length > 0) {
+            return res.status(400).json({ message: "Username sudah digunakan!" });
+        }
+
+        // 2. Acak (Hash) Password menggunakan bcryptjs
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        // 3. Simpan data ke database menggunakan Raw Query
+        // Kita otomatis memberikan role 'admin' untuk akun yang didaftarkan
+        await db.sequelize.query(
+            'INSERT INTO "Users" (username, password, role, "createdAt", "updatedAt") VALUES (:username, :password, :role, NOW(), NOW())',
+            { 
+                replacements: { 
+                    username: username, 
+                    password: hashedPassword,
+                    role: 'admin' 
+                } 
+            }
+        );
+        
+        res.status(201).json({ message: "Registrasi berhasil!" });
+
+    } catch (err) {
+        console.error("Error di sistem register:", err.message);
+        res.status(500).json({ message: "Terjadi kesalahan saat menyimpan data ke database" });
+    }
+};
+
 module.exports = {
-    login
+    login,
+    register // Jangan lupa mengekspor fungsi baru ini!
 };
