@@ -6,6 +6,7 @@ const db = require('./models');
 const transactionRoutes = require('./routes/transactionRoutes');
 const productRoutes = require('./routes/productRoutes');
 const authRoutes = require('./routes/authRoutes');
+const webhookRoutes = require('./routes/webhookRoutes');
 
 const app = express();
 const PORT = 5000;
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/transactions', transactionRoutes);
+app.use('/api/webhooks', webhookRoutes);
 
 db.sequelize.sync()
     .then(() => {
