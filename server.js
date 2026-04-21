@@ -21,11 +21,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/webhooks', webhookRoutes);
 
-db.sequelize.sync()
-    .then(() => {
-   app.listen(PORT, () =>
-    console.log(`Server berjalan di port ${PORT}`));
-    })
-    .catch(err => {
-        console.error("Gagal menyinkronkan database:", err.message);
-    });
+// Langsung jalankan server, database biarkan diurus oleh Migration
+app.listen(PORT, () => {
+    console.log(`Server berjalan di port ${PORT}`);
+});
