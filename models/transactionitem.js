@@ -15,15 +15,20 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   TransactionItem.init({
-    transaction_id: DataTypes.UUID,
-    product_id: DataTypes.UUID,
-    quantity: DataTypes.INTEGER,
-    priceAtTransaction: DataTypes.INTEGER
-  }, {
-    sequelize,
-    modelName: 'TransactionItem',
-    tableName: 'transaction_items',
-    underscored: true,
-  });
+    // 1. TAMBAHKAN BLOK ID INI AGAR OTOMATIS TERISI
+    id: {
+      type: DataTypes.UUID,
+      primaryKey: true,
+      defaultValue: DataTypes.UUIDV4
+    },
+      transaction_id: DataTypes.UUID,
+      product_id: DataTypes.UUID,
+      quantity: DataTypes.INTEGER,
+      priceAtTransaction: DataTypes.INTEGER
+    }, {
+      sequelize,
+      modelName: 'TransactionItem',
+      tableName: 'transaction_items', // << TAMBAHKAN BARIS INI
+    });
   return TransactionItem;
 };

@@ -17,14 +17,19 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Product.init({
+    // 1. TAMBAHKAN BLOK ID INI AGAR OTOMATIS TERISI
+    id: {
+      type: DataTypes.UUID,
+      primaryKey: true,
+      defaultValue: DataTypes.UUIDV4
+    },
     nama: DataTypes.STRING,
-    stok: DataTypes.INTEGER,
-    harga_jual: DataTypes.INTEGER
+    harga_jual: DataTypes.INTEGER,
+    stok: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Product',
-    tableName: 'products',
-    underscored: true,
+    tableName: 'products', // 2. TAMBAHKAN INI AGAR HURUF KECIL SEMUA
   });
   return Product;
 };

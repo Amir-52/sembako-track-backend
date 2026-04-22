@@ -15,14 +15,20 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
-  Transaction.init({
+  Transaction.init(
+    {
+    // 1. TAMBAHKAN BLOK ID INI AGAR OTOMATIS TERISI
+    id: {
+      type: DataTypes.UUID,
+      primaryKey: true,
+      defaultValue: DataTypes.UUIDV4, 
+    }, 
     totalPrice: DataTypes.INTEGER,
     date: DataTypes.DATE
-  }, {
-    sequelize,
-    modelName: 'Transaction',
-    tableName: 'transactions',
-    underscored: true,
-  });
+    }, {
+      sequelize,
+      modelName: 'Transaction',
+      tableName: 'transactions', // << TAMBAHKAN BARIS INI
+    });
   return Transaction;
 };
