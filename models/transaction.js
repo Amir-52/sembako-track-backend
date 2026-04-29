@@ -23,6 +23,10 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4, 
     }, 
+    status: {
+      type: DataTypes.STRING,
+      defaultValue: 'PENDING'
+    },
     totalPrice: DataTypes.INTEGER,
     date: DataTypes.DATE
     }, {

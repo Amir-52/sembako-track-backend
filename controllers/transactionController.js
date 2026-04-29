@@ -1,4 +1,4 @@
-const { Transaction, TransactionItem, Product, sequelize } = require('../models');
+const { Transaction, TransactionItem, Product, StockMutation, sequelize } = require('../models');
 
 const createTransaction = async (req, res) => {
     const t = await sequelize.transaction();
@@ -9,7 +9,8 @@ const createTransaction = async (req, res) => {
 
         const newTransaction = await Transaction.create({
             date: new Date(),
-            totalPrice: 0
+            totalPrice: 0,
+            status: 'PAID'
         }, { transaction: t });
 
         for (const item of items) {
@@ -33,9 +34,15 @@ const createTransaction = async (req, res) => {
                 priceAtTransaction: harga
             }, { transaction: t });
 
-            
             await product.update({
                 stok: stokNow - item.quantity
+            }, { transaction: t });
+
+            await StockMutation.create({
+                product_id: item.productId,
+                mutation_type: 'OUT',
+                quantity: item.quantity,
+                reference_id: newTransaction.id
             }, { transaction: t });
         }
         
@@ -50,7 +57,11 @@ const createTransaction = async (req, res) => {
             data: newTransaction
         });
     } catch (error) {
-        await t.rollback();
+        try {
+            await t.rollback();
+        } catch (e) {
+            // Abaikan error rollback jika transaksi sudah berstatus commit/rollback
+        }
         res.status(400).json({
             message: "Transaksi gagal dilakukan", 
             error: error.message

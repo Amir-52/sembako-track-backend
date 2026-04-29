@@ -2,7 +2,7 @@ const db = require('../models');
 const bcrypt = require('bcryptjs'); // Menggunakan bcryptjs sesuai kodemu
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = 'rahasia_sembako_super_aman_123'; // Pindahkan kuncinya ke sini
+const JWT_SECRET = process.env.JWT_SECRET || 'rahasia_sembako_super_aman_123';
 
 // ==========================================
 // FITUR LOGIN (Kode aslimu)
@@ -68,14 +68,14 @@ const register = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         // 3. Simpan data ke database menggunakan Raw Query
-        // Kita otomatis memberikan role 'admin' untuk akun yang didaftarkan
+        // Kita memberikan role 'kasir' sebagai default untuk akun yang didaftarkan
         await db.sequelize.query(
             'INSERT INTO "Users" (username, password, role, "createdAt", "updatedAt") VALUES (:username, :password, :role, NOW(), NOW())',
             { 
                 replacements: { 
                     username: username, 
                     password: hashedPassword,
-                    role: 'admin' 
+                    role: 'kasir' 
                 } 
             }
         );
